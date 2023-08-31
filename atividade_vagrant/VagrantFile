@@ -1,0 +1,23 @@
+# -- mode: ruby --
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Escolha o box que você deseja usar. Neste exemplo, usaremos o Ubuntu 20.04.
+  config.vm.box = "ubuntu/bionic64"
+
+  # Instale os pacotes: Apache ou Nginx, htop, nano, python3.
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get install -y apache2 htop nano python3
+    SHELL
+
+  # Redirecione a porta 80 da VM para a porta 8080 do host.
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Crie um compartilhamento de arquivos entre a máquina local e a VM.
+  config.vm.synced_folder ".", "/vagrant_data"
+
+  # Suba 2 interfaces de rede com IPs de redes diferentes.
+  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "private_network", type: "dhcp"
+end
